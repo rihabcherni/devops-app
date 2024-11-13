@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    sh 'docker-compose build'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    sh 'docker-compose up -d'
+                    // Ajouter des tests pour vérifier les réponses des services
+                    // Par exemple : appel aux endpoints et vérification des réponses
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    // Étapes de déploiement (par ex., sur un serveur distant)
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sh 'docker-compose down'
+            }
+        }
+    }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Genre Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Music Genre Classification</h1>
+    <form id="upload-form" action="/classify" method="post" enctype="multipart/form-data">
+        <label for="wav_file">Choose a WAV file:</label>
+        <input type="file" name="wav_file" id="wav_file" accept=".wav" required><br><br>
+        <button type="submit">Upload and Classify</button>
+    </form>
+
+    <div id="result">
+        <h2>Classification Results</h2>
+        <p id="svm_result">SVM Classification: </p>
+        <p id="vgg19_result">VGG19 Classification: </p>
+    </div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        form.onsubmit = async (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(form);
+            const response = await fetch('/classify', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById('svm_result').textContent = `SVM Classification: ${result.svm_genre}`;
+                document.getElementById('vgg19_result').textContent = `VGG19 Classification: ${result.vgg19_genre}`;
+            } else {
+                document.getElementById('svm_result').textContent = `Error: ${result.error}`;
+                document.getElementById('vgg19_result').textContent = `Error: ${result.error}`;
+            }
+        };
+    </script>
+</body>
+</html>

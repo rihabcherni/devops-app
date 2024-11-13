@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  svm_service:
+    build:
+      context: ./svm_service
+    ports:
+      - "5001:5001"
+
+  vgg19_service:
+    build:
+      context: ./vgg19_service
+    ports:
+      - "5002:5002"
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - svm_service
+      - vgg19_service
