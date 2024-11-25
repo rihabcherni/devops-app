@@ -6,7 +6,7 @@ services:
       context: ./svm_service
     ports:
       - "5001:5001"
-
+ 
   vgg19_service:
     build:
       context: ./vgg19_service

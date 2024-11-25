@@ -8,12 +8,12 @@ app = Flask(__name__)
 
 # Define the URLs for your SVM and VGG19 services
 SVM_SERVICE_URL = "http://svm_service:5001/classify"
-VGG19_SERVICE_URL = "http://vgg19_service:5002/classify"
+VGG19_SERVICE_URL = "http://vgg19_service:5002/classify" 
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
+ 
 @app.route('/classify', methods=['POST'])
 def classify():
     # Get the uploaded WAV file from the form
@@ -28,7 +28,7 @@ def classify():
         response_svm = requests.post(SVM_SERVICE_URL, json={"wav_music": base64_audio})
         
         # Send the audio to the VGG19 service for classification
-        # response_vgg19 = requests.post(VGG19_SERVICE_URL, json={"wav_music": base64_audio})
+        response_vgg19 = requests.post(VGG19_SERVICE_URL, json={"wav_music": base64_audio})
         
         if response_svm.status_code == 200 and response_vgg19.status_code == 200:
             svm_result = response_svm.json()

@@ -2,12 +2,12 @@
 
 from flask import Flask
 
-# Create a Flask application instance
+# Create a Flask application instance 
 app = Flask(__name__)
 
 # Import the main application module
 from frontend import app
-
+ 
 
 
 if __name__ == '__main__':
