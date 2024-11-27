@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,38 +8,57 @@
 </head>
 <body>
     <h1>Music Genre Classification</h1>
-    <form id="upload-form" action="" method="post" enctype="multipart/form-data">
-        <label for="wav_file">Choose a WAV file:</label>
-        <input type="file" name="wav_file" id="wav_file" accept=".wav" required><br><br>
-        <button type="submit">Upload and Classify</button>
-    </form>
+    <div class="classification-container">
+        <!-- SVM Classification Card -->
+        <div class="card">
+            <h2>SVM Classification</h2>
+            <form id="svm-form" action="/classify_svm" method="post" enctype="multipart/form-data">
+                <label for="svm_file">Choose a WAV file:</label>
+                <input type="file" name="wav_file" id="svm_file" accept=".wav" required><br><br>
+                <button type="submit">Classify with SVM</button>
+            </form>
+            <p id="svm_result">SVM Result: </p>
+        </div>
 
-    <div id="result">
-        <h2>Classification Results</h2>
-        <p id="svm_result">SVM Classification: </p>
-        <p id="vgg19_result">VGG19 Classification: </p>
+        <!-- VGG19 Classification Card -->
+        <div class="card">
+            <h2>VGG19 Classification</h2>
+            <form id="vgg-form" action="/classify_vgg19" method="post" enctype="multipart/form-data">
+                <label for="vgg_file">Choose a WAV file:</label>
+                <input type="file" name="wav_file" id="vgg_file" accept=".wav" required><br><br>
+                <button type="submit">Classify with VGG19</button>
+            </form>
+            <p id="vgg19_result">VGG19 Result: </p>
+        </div>
     </div>
 
     <script>
-        const form = document.getElementById('upload-form');
-        form.onsubmit = async (event) => {
+        // Handle SVM classification
+        const svmForm = document.getElementById('svm-form');
+        svmForm.onsubmit = async (event) => {
             event.preventDefault();
-            
-            const formData = new FormData(form);
-            const response = await fetch('/classify', {
+            const formData = new FormData(svmForm);
+            const response = await fetch('/classify_svm', {
                 method: 'POST',
                 body: formData
             });
-
             const result = await response.json();
+            document.getElementById('svm_result').textContent = 
+                response.ok ? `SVM Result: ${result.svm_genre}` : `Error: ${result.error}`;
+        };
 
-            if (response.ok) {
-                document.getElementById('svm_result').textContent = `SVM Classification: ${result.svm_genre}`;
-                document.getElementById('vgg19_result').textContent = `VGG19 Classification: ${result.vgg19_genre}`;
-            } else {
-                document.getElementById('svm_result').textContent = `Error: ${result.error}`;
-                document.getElementById('vgg19_result').textContent = `Error: ${result.error}`;
-            }
+        // Handle VGG19 classification
+        const vggForm = document.getElementById('vgg-form');
+        vggForm.onsubmit = async (event) => {
+            event.preventDefault();
+            const formData = new FormData(vggForm);
+            const response = await fetch('/classify_vgg19', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('vgg19_result').textContent = 
+                response.ok ? `VGG19 Result: ${result.vgg19_genre}` : `Error: ${result.error}`;
         };
     </script>
 </body>
