@@ -1,41 +1,80 @@
+
 body {
+    background-image: url('/static/img2.jpg');
+    background-size: cover;
+    background-position: center;
     font-family: Arial, sans-serif;
+    color: #fff;
     margin: 0;
-    padding: 20px;
-    background-color: #f4f4f9;
-    text-align: center;
+    padding: 0;
 }
 
 h1 {
-    color: #333;
+    text-align: center;
+    font-size: 36px;
+    margin-top: 50px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .classification-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 20px;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    margin: 50px auto;
+    max-width: 1200px;
+    width: 90%;
 }
 
 .card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 45%; 
     padding: 20px;
-    width: 300px;
-    text-align: left;
+    background-color: rgba(0, 0, 0, 0.7); 
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    text-align: center;
 }
 
 .card h2 {
-    color: #444;
+    font-size: 24px;
+    margin-bottom: 20px;
 }
 
-.card form {
-    margin-bottom: 10px;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
 }
 
-.card p {
-    font-weight: bold;
-    color: #555;
+input[type="file"], button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+input[type="file"]:hover, button:hover {
+    background-color: #45a049;
+}
+
+p {
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .classification-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 80%;
+        margin-bottom: 20px;
+    }
 }
