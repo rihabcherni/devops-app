@@ -12,15 +12,15 @@ pipeline {
             steps {
                 script {
                     sh 'docker-compose up -d'
-                    // Ajouter des tests pour vérifier les réponses des services
-                    // Par exemple : appel aux endpoints et vérification des réponses
+                    // Add tests to verify service responses
+                    // For example, call endpoints and check responses
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    // Étapes de déploiement (par ex., sur un serveur distant)
+                    // Deployment steps (e.g., to a remote server)
                 }
             }
         }
