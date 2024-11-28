@@ -1,72 +1,14 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         SHARED_VOLUME = "/Nouvarch/shared_volume"
-//     }
-
-//     stages {
-//         stage('Setup') {
-//             steps {
-//                 script {
-//                     // Ensure Docker is installed and running
-//                     echo 'Setting up the environment...'
-//                 }
-//             }
-//         }
-//         stage('Build Docker Images') {
-//             steps {
-//                 echo 'Building Docker Images...'
-//                 sh 'docker-compose -f docker-compose.yml build'
-//             }
-//         }
-//         stage('Run Tests') {
-//             steps {
-//                 echo 'Running unit tests...'
-//                 sh """
-//                     docker run --rm -v ${WORKSPACE}/svm_service:/app devops-app/svm-service:latest \
-//                         python -m unittest discover -s /app/tests -p "*.py"
-//                 """
-//             }
-//         }
-//         stage('Start Services') {
-//             steps {
-//                 echo 'Starting all services...'
-//                 sh 'docker-compose -f docker-compose.yml up -d'
-//             }
-//         }
-//         stage('Deploy') {
-//             steps {
-//                 echo 'Deploying application...'
-//                 // Insert deployment strategy here (e.g., Kubernetes or remote server)
-//             }
-//         }
-//     }
-//     post {
-//         always {
-//             echo 'Cleaning up...'
-//             sh 'docker-compose -f docker-compose.yml down'
-//         }
-//         success {
-//             echo 'Pipeline completed successfully!'
-//         }
-//         failure {
-//             echo 'Pipeline failed. Please check the logs.'
-//         }
-//     }
-// }
 pipeline {
     agent any
 
     environment {
-        SHARED_VOLUME = "C:\\Nouvarch\\shared_volume" // Chemin Windows
+        SHARED_VOLUME = "C:\\Nouvarch\\shared_volume" 
     }
 
     stages {
         stage('Setup') {
             steps {
                 script {
-                    // Vérifier que Docker est installé et fonctionnel
                     echo 'Setting up the environment...'
                 }
             }
@@ -75,6 +17,15 @@ pipeline {
             steps {
                 echo 'Building Docker Images...'
                 bat 'docker-compose -f docker-compose.yml build'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Python dependencies from requirements.txt...'
+                bat """
+                    docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
+                        pip install -r /app/requirements.txt
+                """
             }
         }
         stage('Run Tests') {
@@ -95,7 +46,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
-                // Ajouter ici la stratégie de déploiement (e.g., Kubernetes ou serveur distant)
             }
         }
     }
