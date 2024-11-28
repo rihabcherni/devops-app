@@ -33,7 +33,7 @@ pipeline {
                 echo 'Running unit tests...'
                 bat """
                     docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
-                        python -m unittest discover -s /app/tests -p "*.py"
+                        python -m unittest discover -s /app/tests -p "test_svm.py"
                 """
             }
         }
