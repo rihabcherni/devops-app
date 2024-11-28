@@ -1,50 +1,77 @@
 import unittest
-import requests
 import base64
-from xmlrunner import XMLTestRunner
-
-BASE_URL = "http://localhost:5000/classify"  # Your classify endpoint
+import json
+from SVM_service.app import app  # Importer votre application Flask
+from io import BytesIO
 
 class TestSVMService(unittest.TestCase):
+    def setUp(self):
+        # Configure le client Flask pour tester l'application
+        self.client = app.test_client()
+        self.client.testing = True
 
-    def test_valid_audio(self):
-        """Test with valid audio data"""
-        with open("tests/pop.00002.wav", "rb") as audio_file:
-            encoded_audio = base64.b64encode(audio_file.read()).decode('utf-8')
-
-        data = {"music_data": encoded_audio}
-        response = requests.post(BASE_URL, json=data)
+    def test_predict_svm_valid_audio(self):
+        # Charger un fichier audio de test en base64
+        with open("test_audio.wav", "rb") as f:
+            audio_data = f.read()
+        base64_audio = base64.b64encode(audio_data).decode('utf-8')
         
-        self.assertEqual(response.status_code, 200)  # Expecting 200 OK for valid input
-        response_json = response.json()
-        self.assertIn("received_message", response_json)
-        self.assertEqual(response_json["received_message"], "Music file received and processed successfully")
-        self.assertIn("response", response_json)
-
-    def test_invalid_audio(self):
-        """Test with invalid audio data"""
-        data = {"music_data": "invalid_base64_audio_data"}  # Invalid base64 string
-        response = requests.post(BASE_URL, json=data)
+        # Envoyer une requête POST avec le fichier audio
+        response = self.client.post(
+            '/predict_svm',
+            data=json.dumps({'wav_music': base64_audio}),
+            content_type='application/json'
+        )
         
-        # Expecting 400 status code for invalid input
-        self.assertEqual(response.status_code, 400)  # Expecting 400 Bad Request
-        response_json = response.json()
-        self.assertIn("received_message", response_json)
-        self.assertEqual(response_json["received_message"], "An error occurred during prediction")
-        self.assertIn("error", response_json)
-
-    def test_missing_audio(self):
-        """Test with no audio data"""
-        response = requests.post(BASE_URL, json={})
+        # Vérifier la réponse
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertIn('genre', data)  # Vérifier si le genre est dans la réponse
+        self.assertIn(data['genre'], ["blues", "classical", "country", "disco", 
+                                      "hiphop", "jazz", "metal", "pop", "reggae", "rock"])
+    
+    def test_predict_svm_no_audio(self):
+        # Tester l'absence de fichier audio
+        response = self.client.post(
+            '/predict_svm',
+            data=json.dumps({}),  # Pas de fichier audio fourni
+            content_type='application/json'
+        )
         
-        # Expecting 400 status code for missing audio data
-        self.assertEqual(response.status_code, 400)  # Expecting 400 Bad Request
-        response_json = response.json()
-        self.assertIn("received_message", response_json)
-        self.assertEqual(response_json["received_message"], "No music file received")
-        self.assertIn("response", response_json)
-        self.assertEqual(response_json["response"], "Error")  # "Error" response for missing data
+        # Vérifier la réponse
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'Aucun fichier audio fourni')
 
-if __name__ == "__main__":
-    with open("test_results.xml", "wb") as output:
-        unittest.main(testRunner=XMLTestRunner(output=output))
+    def test_predict_svm_invalid_audio(self):
+        # Envoyer des données non valides
+        response = self.client.post(
+            '/predict_svm',
+            data=json.dumps({'wav_music': 'invalid_base64'}),
+            content_type='application/json'
+        )
+        
+        # Vérifier la réponse
+        self.assertEqual(response.status_code, 500)
+        data = json.loads(response.data)
+        self.assertIn('error', data)
+
+    def test_svm_service_error_handling(self):
+        # Simuler un cas où une exception interne se produit
+        with app.test_request_context('/predict_svm', method='POST'):
+            response = self.client.post(
+                '/predict_svm',
+                data=json.dumps({'wav_music': base64.b64encode(b"invalid data").decode()}),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 500)
+            data = json.loads(response.data)
+            self.assertIn('error', data)
+
+if __name__ == '__main__':
+    # Créer ou ouvrir le fichier pour enregistrer les résultats
+    with open("test_results.txt", "w") as f:
+        # Rediriger les résultats des tests vers le fichier
+        runner = unittest.TextTestRunner(stream=f, verbosity=2)
+        unittest.main(testRunner=runner, exit=False)

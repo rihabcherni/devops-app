@@ -1,35 +1,57 @@
 pipeline {
     agent any
+
+    environment {
+        SHARED_VOLUME = "/Nouvarch/shared_volume"
+    }
+
     stages {
-        stage('Build') {
+        stage('Setup') {
             steps {
                 script {
-                    sh 'docker-compose build'
+                    // Ensure Docker is installed and running
+                    echo 'Setting up the environment...'
                 }
             }
         }
-        stage('Test') {
+        stage('Build Docker Images') {
             steps {
-                script {
-                    sh 'docker-compose up -d'
-                    // Add tests to verify service responses
-                    // For example, call endpoints and check responses
-                }
+                echo 'Building Docker Images...'
+                sh 'docker-compose -f docker-compose.yml build'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                echo 'Running unit tests...'
+                sh """
+                    docker run --rm -v ${WORKSPACE}/svm_service:/app devops-app/svm-service:latest \
+                        python -m unittest discover -s /app/tests -p "*.py"
+                """
+            }
+        }
+        stage('Start Services') {
+            steps {
+                echo 'Starting all services...'
+                sh 'docker-compose -f docker-compose.yml up -d'
             }
         }
         stage('Deploy') {
             steps {
-                script {
-                    // Deployment steps (e.g., to a remote server)
-                }
+                echo 'Deploying application...'
+                // Insert deployment strategy here (e.g., Kubernetes or remote server)
             }
         }
     }
     post {
         always {
-            script {
-                sh 'docker-compose down'
-            }
+            echo 'Cleaning up...'
+            sh 'docker-compose -f docker-compose.yml down'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs.'
         }
     }
 }
