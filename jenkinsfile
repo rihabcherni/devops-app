@@ -39,12 +39,12 @@ pipeline {
                 echo 'Running unit tests for SVM Service...'
                 bat """
                     docker run --rm -v %WORKSPACE%\\svm_service:/app -v %WORKSPACE%\\reports:/reports devops-app/svm-service:latest ^ 
-                        python -m xmlrunner discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/svm_test_results.xml
+                        python -m xmlrunner discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/test_results.xml
                 """
                 echo 'Running unit tests for VGG19 Service...'
                 bat """
                     docker run --rm -v %WORKSPACE%\\vgg19_service:/app -v %WORKSPACE%\\reports:/reports devops-app/vgg19-service:latest ^ 
-                        python -m xmlrunner discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/vgg19_test_results.xml
+                        python -m xmlrunner discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/test_results.xml
                 """
             }
         }
