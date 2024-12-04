@@ -42,10 +42,11 @@ pipeline {
                 echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
                 
                 bat """
-                    echo 'Starting Docker container for SVM Service...'
-                    docker run --rm -v %WORKSPACE%\\svm_service:/app -v %WORKSPACE%\\reports:/reports devops-app/svm-service:latest ^
-                        python -m xmlrunner discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/test_results.xml
-                """
+    echo 'Starting Docker container for SVM Service...'
+    docker run --rm -v "%WORKSPACE%/svm_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
+        python -m xmlrunner.run discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/test_svm_results.xml
+"""
+
                 
                 // Debugging message after running tests
                 echo 'Finished running unit tests for SVM Service. Check reports/test_results.xml for output.'
@@ -56,10 +57,11 @@ pipeline {
                 echo 'Running tests for VGG19 Service located at /app/tests/test_vgg.py'
                 
                 bat """
-                    echo 'Starting Docker container for VGG19 Service...'
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app -v %WORKSPACE%\\reports:/reports devops-app/vgg19-service:latest ^
-                        python -m xmlrunner discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/test_results.xml
-                """
+    echo 'Starting Docker container for SVM Service...'
+    docker run --rm -v "%WORKSPACE%/vgg19:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
+        python -m xmlrunner.run discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/test_vgg_results.xml
+"""
+
                 
                 // Debugging message after running tests
                 echo 'Finished running unit tests for VGG19 Service. Check reports/test_results.xml for output.'
