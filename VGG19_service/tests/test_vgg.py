@@ -68,7 +68,11 @@ class TestVGGService(unittest.TestCase):
             data = json.loads(response.data)
             self.assertIn('error', data)
 
-if __name__ == '__main__':
-    with open("test_vgg_results.xml", "wb") as output:
-        runner = xmlrunner.XMLTestRunner(output=output)
-        unittest.main(testRunner=runner, exit=False)
+if __name__ == "__main__":
+    with open('/reports/test_vgg_results.xml', 'wb') as output:
+        unittest.main(
+            testRunner=xmlrunner.XMLTestRunner(output=output),
+            failfast=False,
+            buffer=False,
+            catchbreak=False,
+        )

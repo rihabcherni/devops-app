@@ -35,38 +35,37 @@ pipeline {
             }
         }
         stage('Run Tests') {
-            steps {
-                echo 'Starting unit tests for SVM Service...'
-                
-                // Debugging message before running tests
-                echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
-                
-                bat """
-    echo 'Starting Docker container for SVM Service...'
-    docker run --rm -v "%WORKSPACE%/svm_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
-        python -m xmlrunner.run discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/test_svm_results.xml
-"""
+    steps {
+        echo 'Starting unit tests for SVM Service...'
 
-                
-                // Debugging message after running tests
-                echo 'Finished running unit tests for SVM Service. Check reports/test_results.xml for output.'
+        // Debugging message before running tests
+        echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
 
-                echo 'Starting unit tests for VGG19 Service...'
+        bat """
+            echo 'Starting Docker container for SVM Service...'
+            docker run --rm -v "%WORKSPACE%/svm_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
+                python /app/tests/SVM_service/tests/test_svm.py
+        """
 
-                // Debugging message before running tests
-                echo 'Running tests for VGG19 Service located at /app/tests/test_vgg.py'
-                
-                bat """
-    echo 'Starting Docker container for SVM Service...'
-    docker run --rm -v "%WORKSPACE%/vgg19:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
-        python -m xmlrunner.run discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/test_vgg_results.xml
-"""
+        // Debugging message after running tests
+        echo 'Finished running unit tests for SVM Service. Check reports/test_svm_results.xml for output.'
 
-                
-                // Debugging message after running tests
-                echo 'Finished running unit tests for VGG19 Service. Check reports/test_results.xml for output.'
-            }
-        }
+        echo 'Starting unit tests for VGG19 Service...'
+
+        // Debugging message before running tests
+        echo 'Running tests for VGG19 Service located at /app/tests/test_vgg.py'
+
+        bat """
+            echo 'Starting Docker container for VGG19 Service...'
+            docker run --rm -v "%WORKSPACE%/vgg19:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
+                python /app/tests/VGG19_service/tests/test_vgg.py
+        """
+
+        // Debugging message after running tests
+        echo 'Finished running unit tests for VGG19 Service. Check reports/test_vgg_results.xml for output.'
+    }
+}
+
         stage('Start Services') {
             steps {
                 echo 'Starting all services...'
