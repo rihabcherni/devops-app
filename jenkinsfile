@@ -24,11 +24,12 @@ pipeline {
             steps {
                 echo 'Installing Python dependencies from requirements.txt...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^ 
+                    docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
                         pip install -r /app/requirements.txt
                 """
+                echo 'Installing Python dependencies from requirements.txt...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^ 
+                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
                         pip install -r /app/requirements.txt
                 """
             }
