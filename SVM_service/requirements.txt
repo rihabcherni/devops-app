@@ -2,3 +2,4 @@ flask
 scikit-learn
 librosa
 numpy
+xmlrunner
