@@ -28,7 +28,7 @@ pipeline {
                 """
                 echo 'Installing Python dependencies from requirements.txt...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
                         pip install -r /app/requirements.txt
                 """
             }
@@ -42,7 +42,7 @@ pipeline {
                 """
                 echo 'Running unit tests...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
                         python -m unittest discover -s /app/tests -p "VGG19_service/tests/test_vgg.py"
                 """
             }
