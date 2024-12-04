@@ -69,8 +69,6 @@ class TestVGGService(unittest.TestCase):
             self.assertIn('error', data)
 
 if __name__ == '__main__':
-    # Créer ou ouvrir le fichier pour enregistrer les résultats
-    with open("test_results.txt", "w") as f:
-        # Rediriger les résultats des tests vers le fichier
-        runner = unittest.TextTestRunner(stream=f, verbosity=2)
+    with open("test_results.xml", "wb") as output:
+        runner = xmlrunner.XMLTestRunner(output=output)
         unittest.main(testRunner=runner, exit=False)
