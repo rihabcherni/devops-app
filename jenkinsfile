@@ -1,83 +1,9 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         SHARED_VOLUME = "C:\\Nouvarch\\shared_volume" 
-//     }
-
-//     stages {
-//         stage('Setup') {
-//             steps {
-//                 script {
-//                     echo 'Setting up the environment...'
-//                 }
-//             } 
-//         }
-//         stage('Build Docker Images') {
-//             steps {
-//                 echo 'Building Docker Images...'
-//                 bat 'docker-compose -f docker-compose.yml build'
-//             }
-//         }
-//         stage('Install Dependencies') {
-//             steps {
-//                 echo 'Installing Python dependencies from requirements.txt...'
-//                 bat """
-//                     docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
-//                         pip install -r /app/requirements.txt
-//                 """
-//                 echo 'Installing Python dependencies from requirements.txt...'
-//                 bat """
-//                     docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
-//                         pip install -r /app/requirements.txt
-//                 """
-//             }
-//         }
-//         stage('Run Tests') {
-//             steps {
-//                 echo 'Running unit tests...'
-//                 bat """
-//                     docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
-//                         python -m unittest discover -s /app/tests -p "SVM_service/tests/test_svm.py"
-//                 """
-//                 echo 'Running unit tests...'
-//                 bat """
-//                     docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
-//                         python -m unittest discover -s /app/tests -p "VGG19_service/tests/test_vgg.py"
-//                 """
-//             }
-//         }
-//         stage('Start Services') {
-//             steps {
-//                 echo 'Starting all services...'
-//                 bat 'docker-compose -f docker-compose.yml up -d'
-//             }
-//         }
-//         stage('Deploy') {
-//             steps {
-//                 echo 'Deploying application...'
-//             }
-//         }
-//     }
-//     post {
-//         always {
-//             echo 'Cleaning up...'
-//             bat 'docker-compose -f docker-compose.yml down'
-//         }
-//         success {
-//             echo 'Pipeline completed successfully!'
-//         }
-//         failure {
-//             echo 'Pipeline failed. Please check the logs.'
-//         }
-//     }
-// }
 pipeline { 
     agent any
 
     environment {
         SHARED_VOLUME = "C:\\Nouvarch\\shared_volume" 
-        REPORT_DIR = 'test-reports'
+        REPORT_DIR = 'reports' // Répertoire des rapports
     }
 
     stages {
@@ -85,6 +11,7 @@ pipeline {
             steps {
                 script {
                     echo 'Setting up the environment...'
+                    bat 'mkdir %WORKSPACE%\\reports' // Création du répertoire pour les rapports
                 }
             } 
         }
@@ -98,12 +25,11 @@ pipeline {
             steps {
                 echo 'Installing Python dependencies from requirements.txt...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\svm_service:/app devops-app/svm-service:latest ^ 
                         pip install -r /app/requirements.txt
                 """
-                echo 'Installing Python dependencies from requirements.txt...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app devops-app/vgg19-service:latest ^ 
                         pip install -r /app/requirements.txt
                 """
             }
@@ -112,20 +38,14 @@ pipeline {
             steps {
                 echo 'Running unit tests for SVM Service...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\svm_service:/app -v %WORKSPACE%\\reports:/reports devops-app/svm-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\svm_service:/app -v %WORKSPACE%\\reports:/reports devops-app/svm-service:latest ^ 
                         python -m xmlrunner discover -s /app/tests -p "SVM_service/tests/test_svm.py" --output-file /reports/svm_test_results.xml
                 """
                 echo 'Running unit tests for VGG19 Service...'
                 bat """
-                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app -v %WORKSPACE%\\reports:/reports devops-app/vgg19-service:latest ^
+                    docker run --rm -v %WORKSPACE%\\vgg19_service:/app -v %WORKSPACE%\\reports:/reports devops-app/vgg19-service:latest ^ 
                         python -m xmlrunner discover -s /app/tests -p "VGG19_service/tests/test_vgg.py" --output-file /reports/vgg19_test_results.xml
                 """
-                // Exécuter les tests pour SVM et VGG19 services sur Windows
-                bat "docker-compose exec my_app python svm_service/tests/test_app.py --junit-xml=%WORKSPACE%\\reports\\svm_test_results.xml"
-
-// Exécuter les tests pour VGG19
-                bat "docker-compose exec my_app python vgg19_service/tests/test_app.py --junit-xml=%WORKSPACE%\\reports\\vgg19_test_results.xml"
-
             }
         }
         stage('Start Services') {
@@ -134,28 +54,20 @@ pipeline {
                 bat 'docker-compose -f docker-compose.yml up -d'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying application...'
-            }
-        }
         stage('Publish Test Results') {
             steps {
                 script {
-                    // Archive and publish JUnit test results
-                    junit "${REPORT_DIR}/svm_test_results.xml"
-                    junit "${REPORT_DIR}/vgg19_test_results.xml"
+                    echo 'Publishing test results...'
+                    junit 'reports/*.xml' // Publication des fichiers de test XML
                 }
             }
         }
     }
-    
+
     post {
         always {
             echo 'Cleaning up...'
             bat 'docker-compose -f docker-compose.yml down'
-            junit 'reports/*.xml'
-
         }
         success {
             echo 'Pipeline completed successfully!'
@@ -163,6 +75,5 @@ pipeline {
         failure {
             echo 'Pipeline failed. Please check the logs.'
         }
-
     }
 }
