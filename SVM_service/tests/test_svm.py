@@ -4,7 +4,7 @@ import json
 from SVM_service.app import app  # Importer votre application Flask
 from io import BytesIO
 
-class TestSVMService(unittest.TestCase):
+class TestSVMService(unittest.TestCase): 
     def setUp(self):
         # Configure le client Flask pour tester l'application
         self.client = app.test_client()
