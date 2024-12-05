@@ -1,7 +1,7 @@
 import unittest
 import base64
 import json
-from VGG19_service.app import app
+from vgg19_service.app import app
 from io import BytesIO
 
 class TestVGGService(unittest.TestCase): 
