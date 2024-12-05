@@ -3,6 +3,8 @@ import base64
 import json
 from app import app
 from io import BytesIO
+import xmlrunner
+
 
 class TestSVMService(unittest.TestCase): 
     def setUp(self):
