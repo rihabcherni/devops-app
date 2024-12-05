@@ -71,6 +71,9 @@ class TestSVMService(unittest.TestCase):
             self.assertIn('error', data)
 
 if __name__ == "__main__":
+    import xmlrunner
+    import unittest
+
     with open('/reports/test_svm_results.xml', 'wb') as output:
         unittest.main(
             testRunner=xmlrunner.XMLTestRunner(output=output),
@@ -78,3 +81,4 @@ if __name__ == "__main__":
             buffer=False,
             catchbreak=False,
         )
+
