@@ -13,7 +13,7 @@ class TestVGGService(unittest.TestCase):
 
     def test_predict_vgg_valid_audio(self):
         # Charger un fichier audio de test en base64
-        with open("test_audio.wav", "rb") as f:
+        with open("tests/test_audio.wav", "rb") as f:
             audio_data = f.read()
         base64_audio = base64.b64encode(audio_data).decode('utf-8')
         
@@ -71,14 +71,11 @@ class TestVGGService(unittest.TestCase):
             self.assertIn('error', data)
 
 if __name__ == "__main__":
-    import xmlrunner
-    import unittest
+    unittest.main(
+        testRunner=xmlrunner.XMLTestRunner(output='/reports'),
+        failfast=False,
+        buffer=False,
+        catchbreak=False,
+    )
 
-    with open('/reports/test_vgg_results.xml', 'wb') as output:
-        unittest.main(
-            testRunner=xmlrunner.XMLTestRunner(output=output),
-            failfast=False,
-            buffer=False,
-            catchbreak=False,
-        )
 
