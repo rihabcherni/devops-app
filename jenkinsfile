@@ -44,7 +44,7 @@ pipeline {
         bat """
             echo 'Starting Docker container for SVM Service...'
             docker run --rm -v "%WORKSPACE%/svm_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
-                python /app/tests/SVM_service/tests/test_svm.py
+                python /app/SVM_service/tests/test_svm.py
         """
 
         // Debugging message after running tests
@@ -58,7 +58,7 @@ pipeline {
         bat """
             echo 'Starting Docker container for VGG19 Service...'
             docker run --rm -v "%WORKSPACE%/vgg19:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
-                python /app/tests/VGG19_service/tests/test_vgg.py
+                python /app/VGG19_service/tests/test_vgg.py
         """
 
         // Debugging message after running tests
