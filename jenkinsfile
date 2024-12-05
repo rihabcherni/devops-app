@@ -38,14 +38,31 @@ pipeline {
     steps {
         echo 'Starting unit tests for SVM Service...'
 
-        bat """
-            echo 'Checking file structure in Docker container...'
-            docker run --rm -v "%WORKSPACE%/svm_service:/app" devops-app/svm-service:latest ls -R /app
+        // Debugging message before running tests
+        echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
 
-            echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
-            docker run --rm -v "%WORKSPACE%/svm_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
-                python /app/tests/test_svm.py
+    
+        bat """
+            docker run --rm -v "%WORKSPACE%/SVM_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
+                bash -c "export PYTHONPATH=/app && python /app/tests/test_svm.py"
         """
+    
+
+        // Debugging message after running tests
+        echo 'Finished running unit tests for SVM Service. Check reports/test_svm_results.xml for output.'
+
+        echo 'Starting unit tests for VGG19 Service...'
+
+        // Debugging message before running tests
+        echo 'Running tests for VGG19 Service located at /app/tests/test_vgg.py'
+
+         bat """
+            docker run --rm -v "%WORKSPACE%/VGG19_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
+                bash -c "export PYTHONPATH=/app && python /app/tests/test_vgg.py"
+        """
+
+        // Debugging message after running tests
+        echo 'Finished running unit tests for VGG19 Service. Check reports/test_vgg_results.xml for output.'
     }
 }
 

@@ -1,7 +1,7 @@
 import unittest
 import base64
 import json
-from svm_service.app import app
+from app import app
 from io import BytesIO
 
 class TestSVMService(unittest.TestCase): 
