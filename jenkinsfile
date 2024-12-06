@@ -42,15 +42,10 @@ pipeline {
         echo 'Running tests for SVM Service located at /app/tests/test_svm.py'
 
     
-        // bat """
-        //     docker run --rm -v "%WORKSPACE%/SVM_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
-        //         bash -c "export PYTHONPATH=/app && python /app/tests/test_svm.py"
-        // """
         bat """
-    docker run --rm -v "%WORKSPACE%/SVM_service:/app" -v "%WORKSPACE%/reports:/app/reports" devops-app/svm-service:latest ^
-        bash -c "export PYTHONPATH=/app && python /app/tests/test_svm.py"
-"""
-
+            docker run --rm -v "%WORKSPACE%/SVM_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/svm-service:latest ^
+                bash -c "export PYTHONPATH=/app && python /app/tests/test_svm.py"
+        """
     
 
         // Debugging message after running tests
@@ -61,20 +56,22 @@ pipeline {
         // Debugging message before running tests
         echo 'Running tests for VGG19 Service located at /app/tests/test_vgg.py'
 
-        //  bat """
-        //     docker run --rm -v "%WORKSPACE%/VGG19_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
-        //         bash -c "export PYTHONPATH=/app && python /app/tests/test_vgg.py"
-        // """
-        bat """
-    docker run --rm -v "%WORKSPACE%/VGG19_service:/app" -v "%WORKSPACE%/reports:/app/reports" devops-app/vgg19-service:latest ^
-        bash -c "export PYTHONPATH=/app && python /app/tests/test_vgg.py"
-"""
-
+         bat """
+            docker run --rm -v "%WORKSPACE%/VGG19_service:/app" -v "%WORKSPACE%/reports:/reports" devops-app/vgg19-service:latest ^
+                bash -c "export PYTHONPATH=/app && python /app/tests/test_vgg.py"
+        """
 
         // Debugging message after running tests
         echo 'Finished running unit tests for VGG19 Service. Check reports/test_vgg_results.xml for output.'
     }
 }
+stage('Verify Test Reports') {
+    steps {
+        echo 'Checking if test reports were generated...'
+        bat 'dir %WORKSPACE%\\reports'
+    }
+}
+
 
         stage('Start Services') {
             steps {
