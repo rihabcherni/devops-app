@@ -1,7 +1,7 @@
 import unittest
 import base64
 import json
-from SVM_service.app import app
+from app import app
 from io import BytesIO
 import xmlrunner
 import os
