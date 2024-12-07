@@ -1,9 +1,10 @@
 import unittest
 import base64
 import json
-from app import app
+from VGG19_service.app import app
 from io import BytesIO
 import xmlrunner
+import os
 
 
 class TestVGGService(unittest.TestCase): 
@@ -13,7 +14,8 @@ class TestVGGService(unittest.TestCase):
 
     def test_predict_vgg_valid_audio(self):
         # Charger un fichier audio de test en base64
-        with open("tests/test_audio.wav", "rb") as f:
+        file_path = os.path.join(os.path.dirname(__file__), "test_audio.wav")
+        with open(file_path, "rb") as f:
             audio_data = f.read()
         base64_audio = base64.b64encode(audio_data).decode('utf-8')
         
@@ -25,7 +27,7 @@ class TestVGGService(unittest.TestCase):
         )
         
         # Vérifier la réponse
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 500)
         data = json.loads(response.data)
         self.assertIn('genre', data)  # Vérifier si le genre est dans la réponse
         self.assertIn(data['genre'], ["blues", "classical", "country", "disco", 

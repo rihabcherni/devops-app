@@ -5,12 +5,23 @@ import numpy as np
 import librosa
 from io import BytesIO
 import xmlrunner 
+import os
 
 app = Flask(__name__)
 
 # Charger le modèle SVM
-with open("../model/svm_model.pkl", "rb") as f:
+# with open("model/svm_model.pkl", "rb") as f:
+#     svm_model = pickle.load(f)
+
+
+# Définir le chemin absolu du modèle
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "model", "svm_model.pkl")
+
+# Charger le modèle SVM
+with open(MODEL_PATH, "rb") as f:
     svm_model = pickle.load(f)
+
 
 # Genres list (same order as in your training data)
 genres = ["blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"]
