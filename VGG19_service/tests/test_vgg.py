@@ -13,25 +13,25 @@ class TestVGGService(unittest.TestCase):
         self.client.testing = True
 
     def test_predict_vgg_valid_audio(self):
-        # Charger un fichier audio de test en base64
-        file_path = os.path.join(os.path.dirname(__file__), "test_audio.wav")
-        with open(file_path, "rb") as f:
-            audio_data = f.read()
-        base64_audio = base64.b64encode(audio_data).decode('utf-8')
-        
-        # Envoyer une requête POST avec le fichier audio
-        response = self.client.post(
-            '/predict_vgg',
-            data=json.dumps({'wav_music': base64_audio}),
-            content_type='application/json'
-        )
-        
-        # Vérifier la réponse
-        self.assertEqual(response.status_code, 500)
-        data = json.loads(response.data)
-        self.assertIn('genre', data)  # Vérifier si le genre est dans la réponse
-        self.assertIn(data['genre'], ["blues", "classical", "country", "disco", 
-                                      "hiphop", "jazz", "metal", "pop", "reggae", "rock"])
+    file_path = os.path.join(os.path.dirname(__file__), "test_audio.wav")
+    with open(file_path, "rb") as f:
+        audio_data = f.read()
+    base64_audio = base64.b64encode(audio_data).decode('utf-8')
+    
+    # Envoyer une requête POST avec le fichier audio
+    response = self.client.post(
+        '/predict_vgg',
+        data=json.dumps({'wav_music': base64_audio}),
+        content_type='application/json'
+    )
+    
+    # Vérifier la réponse
+    self.assertEqual(response.status_code, 200)
+    data = json.loads(response.data)
+    self.assertIn('genre', data)  # Vérifier si le genre est dans la réponse
+    self.assertIn(data['genre'], ["blues", "classical", "country", "disco", 
+                                  "hiphop", "jazz", "metal", "pop", "reggae", "rock"])
+
     
     def test_predict_vgg_no_audio(self):
         # Tester l'absence de fichier audio
