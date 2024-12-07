@@ -8,7 +8,7 @@ import xmlrunner
 
 app = Flask(__name__)
 
-with open("model/vgg_model.pkl", "rb") as f:
+with open("../model/vgg_model.pkl", "rb") as f:
     vgg_model = pickle.load(f)
 
 genres = ["blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"]

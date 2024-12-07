@@ -9,7 +9,7 @@ import xmlrunner
 app = Flask(__name__)
 
 # Charger le modèle SVM
-with open("model/svm_model.pkl", "rb") as f:
+with open("../model/svm_model.pkl", "rb") as f:
     svm_model = pickle.load(f)
 
 # Genres list (same order as in your training data)
