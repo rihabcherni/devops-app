@@ -5,14 +5,11 @@ import numpy as np
 import librosa
 from io import BytesIO
 import xmlrunner 
-import os
 
 app = Flask(__name__)
 
-# with open("model/vgg_model.pkl", "rb") as f:
-#     vgg_model = pickle.load(f)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "model", "vgg_model.pkl")
+with open("model/vgg_model.pkl", "rb") as f:
+    vgg_model = pickle.load(f)
 
 genres = ["blues", "classical", "country", "disco", "hiphop", "jazz", "metal", "pop", "reggae", "rock"]
 
